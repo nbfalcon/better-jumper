@@ -541,6 +541,37 @@ Cleans up deleted windows and copies history to newly created windows."
     (better-jumper--load-savehist)
   (add-hook 'savehist-mode-hook #'better-jumper--load-savehist))
 
+;;;;;;;;;;;;;;;;;;;;;
+;;;   Idle jumps  ;;;
+;;;;;;;;;;;;;;;;;;;;;
+
+(defvar-local better-jumper--jump-idle-timer nil
+  "Holds the idle timer for `better-jumper-idle-mode'")
+
+(defcustom better-jumper-idle-time 2
+  "Number of seconds to wait before recording an idle jump.
+See `better-jumper-idle-mode'."
+  :group 'better-jumper
+  :type 'number)
+
+(define-minor-mode better-jumper-idle-mode
+  "Automatically record jumps when idling."
+  :init-value nil
+  :ligher nil
+  (when better-jumper--jump-idle-timer
+    (cancel-timer better-jumper--jump-idle-timer))
+  (setq better-jumper--jump-idle-timer
+        (when better-jumper-idle-mode
+          (let ((buf (current-buffer))
+                timer)
+            (setq timer (run-with-idle-timer
+                         better-jumper-idle-time t
+                         (lambda ()
+                           (if (buffer-live-p buf)
+                               (with-current-buffer buf
+                                 (better-jumper-set-jump))
+                             (cancel-timer timer)))))))))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;   EVIL INTEGRATION  ;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;

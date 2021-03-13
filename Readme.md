@@ -128,6 +128,12 @@ This number dictates how many of the most recent buffers should have their jump
 state saved to the savehist file when savehist is enabled the the context is set
 to `'buffer`.
 
+#### `better-jumper-idle-mode`
+
+`better-jumper-idle-mode`, a buffer-local minor-mode, records jumps when idling
+for `better-jumper-idle-time`. It can be useful when exploring different parts
+of a buffer.
+
 # Hooks
 
 #### Pre-jump Hook (`better-jumper-pre-jump-hook`)
